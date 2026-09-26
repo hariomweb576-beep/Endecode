@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EMO•SECRET · Hariom</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;color:#fff;font-family:'Inter',system-ui,sans-serif;
+background:radial-gradient(circle at 10% 20%,#ff9a9e30,transparent 35%),
+radial-gradient(circle at 90% 30%,#a18cd130,transparent 40%),
+radial-gradient(circle at 40% 80%,#fbc2eb30,transparent 45%),
+radial-gradient(circle at 80% 90%,#a6c1ee30,transparent 40%),
+linear-gradient(145deg,#0b0710,#150e1c,#0a0810);
+display:flex;align-items:center;justify-content:center;padding:16px}
+.app{width:100%;max-width:850px;margin:0 auto;padding:18px 14px 45px}
+
+.welcome-splash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;
+align-items:center;justify-content:center;overflow:hidden;
+background:radial-gradient(circle at 20% 20%,#f9d1e8,#c8a2e0,#9f7acb,#6a4b8a);
+background-size:300% 300%;animation:aurora 10s infinite alternate ease-in-out;
+transition:opacity .8s ease,visibility .8s ease}
+.welcome-splash.hidden{opacity:0;visibility:hidden;pointer-events:none}
+@keyframes aurora{0%{background-position:0% 0%}100%{background-position:100% 100%}}
+.balloon-container{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.balloon{position:absolute;width:70px;height:90px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
+animation:floatUp 6s ease-in forwards;opacity:.9}
+.balloon::before{content:'';position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);
+width:2px;height:22px;background:rgba(255,255,255,.5)}
+@keyframes floatUp{0%{transform:translateY(110vh) scale(.8);opacity:0}
+10%{opacity:1}80%{opacity:1}100%{transform:translateY(-30vh) scale(1.2);opacity:0}}
+.welcome-splash h2{font-size:clamp(2.2rem,10vw,4.5rem);line-height:1.15;max-width:800px;
+text-align:center;background:linear-gradient(135deg,#2b0f3b,#4b1e5e,#1f0b2e);
+-webkit-background-clip:text;background-clip:text;color:transparent;
+text-shadow:0 0 30px #ffb7f0;margin-bottom:1.2rem;padding:0 1.5rem;z-index:2;position:relative}
+.welcome-splash p{font-size:1.3rem;color:#2f153b;background:#ffffff50;padding:.6rem 2rem;
+border-radius:60px;backdrop-filter:blur(8px);z-index:2;position:relative}
+
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;
+flex-wrap:wrap;gap:8px}
+.brand{font-weight:900;letter-spacing:1px;display:flex;gap:9px;align-items:center;font-size:1.2rem}
+.logo{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;
+background:linear-gradient(140deg,#ff69b5,#8875ff);box-shadow:0 8px 30px #8b63d844;font-size:1.4rem}
+.top-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lang-select{background:#ffffff0d;border:1px solid #ffffff1c;color:#fff;padding:7px 10px;
+border-radius:99px;font-size:11px;font-weight:700;cursor:pointer;outline:0}
+.lang-select option{background:#1a1420;color:#fff}
+.badge{font-size:10px;color:#c9c0d0;border:1px solid #ffffff1c;border-radius:99px;
+padding:8px 11px;background:#ffffff08;white-space:nowrap}
+
+.hero{text-align:center;padding:42px 4px 26px}
+.ey{font-size:10px;letter-spacing:3px;color:#e6c58a;font-weight:800}
+.hero h1{font-size:clamp(38px,9vw,66px);line-height:1;margin:12px 0;
+background:linear-gradient(90deg,#fff,#ff9dcc,#b5a5ff);
+-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:#aaa2b3;font-size:14px;line-height:1.7;max-width:620px;margin:auto}
+
+.card{background:#130f1cdb;border:1px solid #ffffff1c;border-radius:25px;overflow:hidden;
+box-shadow:0 30px 90px #0008;backdrop-filter:blur(18px)}
+.tabs{display:grid;grid-template-columns:1fr 1fr;padding:7px;border-bottom:1px solid #ffffff13}
+.tab{border:0;background:transparent;color:#8f8799;padding:13px;border-radius:13px;
+font-weight:900;font-size:.95rem;cursor:pointer;transition:all .2s}
+.tab.active{color:#fff;background:linear-gradient(135deg,#ff72b51e,#9078ff1e)}
+.panel{padding:21px}.hidden{display:none!important}
+.label{display:block;font-size:11px;font-weight:900;letter-spacing:.7px;
+color:#ddd5e3;margin-bottom:9px;text-transform:uppercase}
+
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.emoji{height:55px;border:1px solid #ffffff18;border-radius:13px;background:#ffffff07;
+font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+transition:all .15s;padding:0;line-height:1;user-select:none;position:relative}
+.emoji.selected{border:2px solid #ff70b7;background:#ff70b71c;box-shadow:0 0 22px #ff70b780}
+.emoji:hover{background:#ffffff12;border-color:#ff70b780;transform:scale(1.08)}
+.emoji.custom::after{content:'★';position:absolute;top:2px;right:4px;font-size:9px;color:#ffb84d}
+
+.custom-row{display:flex;gap:8px;margin-top:10px}
+.custom-input{flex:1;background:#0005;border:1px solid #ffffff18;color:#fff;
+padding:10px 14px;border-radius:12px;font-size:20px;outline:0;text-align:center}
+.custom-input:focus{border-color:#ff72b588}
+.custom-btn{background:linear-gradient(135deg,#ff60ae,#8c73ff);border:0;color:#fff;
+padding:10px 18px;border-radius:12px;font-weight:900;cursor:pointer;font-size:.85rem}
+.custom-btn:active{transform:scale(.97)}
+
+.note{text-align:center;color:#9e95a7;font-size:11px;margin-top:8px}
+textarea{width:100%;min-height:125px;resize:vertical;border:1px solid #ffffff18;
+border-radius:16px;background:#0005;color:#fff;padding:14px;font:inherit;outline:0;
+transition:border .2s}
+textarea:focus{border-color:#ff72b588}
+.section{margin-top:19px}
+
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:17px}
+.btn{border:0;border-radius:14px;padding:14px;color:#fff;font-weight:900;
+background:linear-gradient(135deg,#ff60ae,#8c73ff);cursor:pointer;font-size:.95rem;
+transition:transform .1s}
+.btn:active{transform:scale(.98)}
+.btn.alt{background:#ffffff0b;border:1px solid #ffffff18}
+
+.result{display:none;margin-top:17px;padding:15px;border:1px solid #ffffff14;
+border-radius:17px;background:#0003}
+.result.show{display:block}
+.out{position:relative}
+.out textarea{min-height:100px;padding-right:78px;font-size:15px;line-height:1.6;
+word-break:break-all;font-family:'Courier New',monospace;letter-spacing:1px}
+.copy{position:absolute;right:8px;bottom:8px;border:1px solid #ffffff18;background:#ffffff0d;
+color:#fff;padding:8px 11px;border-radius:9px;font-weight:800;cursor:pointer;font-size:.8rem}
+
+.status{text-align:center;min-height:18px;font-size:11px;margin-top:8px;color:#aaa}
+.good{color:#87dfae}.bad{color:#ff9bab}
+
+.info{margin-top:15px;padding:13px;border:1px solid #e6c58a1c;border-radius:14px;
+color:#aaa1b0;font-size:11px;line-height:1.6;background:#e6c58a08}
+
+.stat-box{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}
+.stat{background:#ffffff08;border:1px solid #ffffff14;border-radius:10px;padding:8px;
+text-align:center;font-size:10px;color:#9e95a7}
+.stat b{display:block;font-size:16px;color:#fff;margin-top:3px}
+
+.pwd-box{margin-top:10px;position:relative}
+.pwd-box input{width:100%;background:#0005;border:1px solid #ffffff18;color:#fff;
+padding:12px 45px 12px 14px;border-radius:12px;font-size:14px;outline:0;letter-spacing:2px}
+.pwd-box input:focus{border-color:#ff72b588}
+.pwd-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);
+font-size:16px;opacity:.6;cursor:pointer}
+
+footer{text-align:center;color:#6d6575;font-size:10px;margin-top:16px}
+
+@media(max-width:560px){.badge{display:none}.panel{padding:15px}
+.grid{grid-template-columns:repeat(5,1fr);gap:6px}
+.emoji{height:48px;font-size:22px}
+.actions{grid-template-columns:1fr}.out textarea{font-size:12px;padding-right:70px}
+.stat-box{grid-template-columns:1fr 1fr}.top-right{gap:4px}
+.lang-select{padding:5px 8px;font-size:10px}}
+</style>
+</head>
+<body>
+
+<div class="welcome-splash" id="welcomeSplash">
+  <div class="balloon-container" id="balloonContainer"></div>
+  <h2>Welcome to Hariom Website 😆</h2>
+  <p>✨ emoji • secret ✨</p>
+</div>
+
+<div class="app">
+<header class="top">
+  <div class="brand"><div class="logo">✦</div>EMO•SECRET</div>
+  <div class="top-right">
+    <select class="lang-select" id="langSelect" title="Language">
+      <option value="en">🌐 English</option>
+      <option value="hi">🌐 हिंदी</option>
+    </select>
+    <div class="badge">INSTAGRAM · SNAPCHAT · 100%</div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="ey" id="t-ey">CLASSIC PRIVATE MESSAGING</div>
+  <h1 id="t-h1">One emoji. One secret.</h1>
+  <p id="t-p">Ab Instagram & Snapchat ke liye specially optimized! Safe ASCII characters — kabhi modify nahi honge.</p>
+</section>
+
+<main class="card">
+<div class="tabs">
+  <button class="tab active" id="et">✦ <span id="t-encode">Encode</span></button>
+  <button class="tab" id="dt">◈ <span id="t-decode">Decode</span></button>
+</div>
+
+<section class="panel" id="ep">
+  <label class="label" id="t-label1">1 · SELECT YOUR KEY EMOJI</label>
+  <div class="grid" id="grid"></div>
+  <div class="note" id="chosen">Selected: 🎀</div>
+
+  <div class="custom-row">
+    <input type="text" class="custom-input" id="customEmoji" placeholder="➕ Custom emoji" maxlength="4">
+    <button class="custom-btn" id="addCustom">Add</button>
+  </div>
+
+  <div class="section">
+    <label class="label" id="t-label2">2 · WRITE YOUR MESSAGE</label>
+    <textarea id="msg" placeholder="Hindi, English, emoji — koi bhi length..."></textarea>
+    <div class="stat-box">
+      <div class="stat"><span id="t-stat1">Characters</span><b id="charCount">0</b></div>
+      <div class="stat"><span id="t-stat2">String Length</span><b id="emojiCount">0</b></div>
+      <div class="stat"><span id="t-stat3">Ratio</span><b id="savePct">0%</b></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <label class="label" id="t-label3">3 · PASSWORD (OPTIONAL)</label>
+    <div class="pwd-box">
+      <input type="password" id="password" placeholder="Enter password (optional)..." maxlength="64">
+      <span class="pwd-icon" id="togglePwd">👁️</span>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn" id="enc">🔒 <span id="t-enc">Encode & Create</span></button>
+    <button class="btn alt" id="clr"><span id="t-clr">Clear</span></button>
+  </div>
+
+  <div class="result" id="er">
+    <label class="label" id="t-label4">COPY THIS ENCODED STRING</label>
+    <div class="out">
+      <textarea id="out" readonly></textarea>
+      <button class="copy" id="cp">Copy</button>
+    </div>
+    <div class="status good" id="es"></div>
+  </div>
+
+  <div class="info" id="t-info1">
+    <b>100% Working:</b> Sirf safe ASCII characters (A-Z, a-z, 0-9). Instagram & Snapchat kabhi modify nahi karte. Password optional hai!
+  </div>
+</section>
+
+<section class="panel hidden" id="dp">
+  <label class="label" id="t-label5">PASTE THE ENCODED STRING</label>
+  <textarea id="input" placeholder="Paste the complete encoded string here..."></textarea>
+
+  <div class="section">
+    <label class="label" id="t-label6">PASSWORD (if any)</label>
+    <div class="pwd-box">
+      <input type="password" id="passwordDecode" placeholder="Enter password..." maxlength="64">
+      <span class="pwd-icon" id="togglePwdDecode">👁️</span>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn" id="dec">🔓 <span id="t-dec">Decode Message</span></button>
+    <button class="btn alt" id="dclr"><span id="t-dclr">Clear</span></button>
+  </div>
+
+  <div class="result" id="dr">
+    <label class="label" id="t-label7">HIDDEN MESSAGE</label>
+    <textarea id="decoded" readonly></textarea>
+    <div class="status" id="ds"></div>
+  </div>
+
+  <div class="info" id="t-info2">
+    <b>Note:</b> Poora string paste karo. Agar password lagaya tha toh wahi password dalo.
+  </div>
+</section>
+</main>
+<footer id="t-footer">EMO•SECRET · Instagram · Snapchat · 100% Working · No server</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
+<script>
+(function(){
+  /* ============ BALLOONS ============ */
+  const bc=document.getElementById('balloonContainer');
+  const colors=['#ff7eb3','#a18cd1','#fbc2eb','#8fd3f4','#ffd1a9','#b5ead7',
+                '#ff9a9e','#c2a0e6','#f6d5f7','#a6c1ee','#ffb7b2','#d4fc79',
+                '#a0d8f1','#f78fd0'];
+  for(let i=0;i<14;i++){
+    const b=document.createElement('div');
+    b.className='balloon';
+    b.style.left=(5+Math.random()*90)+'%';
+    b.style.animationDuration=(4.5+Math.random()*3)+'s';
+    b.style.animationDelay=(Math.random()*1.2)+'s';
+    const s=50+Math.random()*35;
+    b.style.width=s+'px';b.style.height=(s*1.25)+'px';
+    const c=colors[i%colors.length];
+    b.style.background=`radial-gradient(circle at 30% 30%, ${c}, ${c}dd)`;
+    bc.appendChild(b);
+  }
+
+  /* ============ SPLASH HIDE ============ */
+  const splash=document.getElementById('welcomeSplash');
+  setTimeout(()=>splash.classList.add('hidden'),3200);
+  setTimeout(()=>{if(splash.parentNode)splash.style.display='none'},4200);
+
+  /* ============ TRANSLATIONS ============ */
+  const i18n = {
+    en: {
+      ey:"CLASSIC PRIVATE MESSAGING", h1:"One emoji. One secret.",
+      p:"Ab Instagram & Snapchat ke liye specially optimized! Safe ASCII characters — kabhi modify nahi honge.",
+      encode:"Encode", decode:"Decode",
+      label1:"1 · SELECT YOUR KEY EMOJI", label2:"2 · WRITE YOUR MESSAGE",
+      label3:"3 · PASSWORD (OPTIONAL)", label4:"COPY THIS ENCODED STRING",
+      label5:"PASTE THE ENCODED STRING", label6:"PASSWORD (if any)",
+      label7:"HIDDEN MESSAGE",
+      enc:"Encode & Create", clr:"Clear", dec:"Decode Message", dclr:"Clear",
+      stat1:"Characters", stat2:"String Length", stat3:"Ratio",
+      info1:"<b>100% Working:</b> Sirf safe ASCII characters (A-Z, a-z, 0-9). Instagram & Snapchat kabhi modify nahi karte. Password optional hai!",
+      info2:"<b>Note:</b> Poora string paste karo. Agar password lagaya tha toh wahi password dalo.",
+      footer:"EMO•SECRET · Instagram · Snapchat · 100% Working · No server",
+      selected:"Selected: ", copied:"Copied ✓", copy:"Copy", ready:"✓ Ready",
+      errEmpty:"Pehle message likho.",
+      okDecode:"✓ Message decoded successfully!",
+      customAdded:"Custom emoji added!", customInvalid:"Valid emoji daalo!",
+      customExists:"Ye emoji already hai!",
+      pwdProtected:"Ye message password-protected hai! Password daalo.",
+      pwdWrong:"Galat password! Dobara try karo."
+    },
+    hi: {
+      ey:"क्लासिक प्राइवेट मैसेजिंग", h1:"एक इमोजी। एक सीक्रेट।",
+      p:"अब Instagram और Snapchat के लिए खास! सेफ ASCII कैरेक्टर — कभी नहीं बदलेंगे।",
+      encode:"एनकोड", decode:"डिकोड",
+      label1:"1 · अपना की इमोजी चुनो", label2:"2 · अपना मैसेज लिखो",
+      label3:"3 · पासवर्ड (ऑप्शनल)", label4:"इस स्ट्रिंग को कॉपी करो",
+      label5:"एनकोडेड स्ट्रिंग पेस्ट करो", label6:"पासवर्ड (अगर है)",
+      label7:"छुपा हुआ मैसेज",
+      enc:"एनकोड करो", clr:"क्लियर", dec:"डिकोड करो", dclr:"क्लियर",
+      stat1:"कैरेक्टर", stat2:"स्ट्रिंग लंबाई", stat3:"अनुपात",
+      info1:"<b>100% वर्किंग:</b> सिर्फ सेफ ASCII कैरेक्टर। पासवर्ड ऑप्शनल है!",
+      info2:"<b>नोट:</b> पूरा स्ट्रिंग पेस्ट करो। पासवर्ड लगाया था तो वही डालो।",
+      footer:"EMO•SECRET · Instagram · Snapchat · 100% वर्किंग",
+      selected:"चुना: ", copied:"कॉपी हो गया ✓", copy:"कॉपी", ready:"✓ तैयार",
+      errEmpty:"पहले मैसेज लिखो।",
+      okDecode:"✓ मैसेज डिकोड हो गया!",
+      customAdded:"कस्टम इमोजी जुड़ गया!", customInvalid:"सही इमोजी डालो!",
+      customExists:"ये इमोजी पहले से है!",
+      pwdProtected:"ये मैसेज पासवर्ड-प्रोटेक्टेड है! पासवर्ड डालो।",
+      pwdWrong:"गलत पासवर्ड! दोबारा try करो।"
+    }
+  };
+  
+  let currentLang = 'en';
+
+  function applyLang(lang){
+    currentLang = lang;
+    const t = i18n[lang];
+    document.getElementById('t-ey').textContent = t.ey;
+    document.getElementById('t-h1').textContent = t.h1;
+    document.getElementById('t-p').textContent = t.p;
+    document.getElementById('t-encode').textContent = t.encode;
+    document.getElementById('t-decode').textContent = t.decode;
+    document.getElementById('t-label1').textContent = t.label1;
+    document.getElementById('t-label2').textContent = t.label2;
+    document.getElementById('t-label3').textContent = t.label3;
+    document.getElementById('t-label4').textContent = t.label4;
+    document.getElementById('t-label5').textContent = t.label5;
+    document.getElementById('t-label6').textContent = t.label6;
+    document.getElementById('t-label7').textContent = t.label7;
+    document.getElementById('t-enc').textContent = t.enc;
+    document.getElementById('t-clr').textContent = t.clr;
+    document.getElementById('t-dec').textContent = t.dec;
+    document.getElementById('t-dclr').textContent = t.dclr;
+    document.getElementById('t-stat1').textContent = t.stat1;
+    document.getElementById('t-stat2').textContent = t.stat2;
+    document.getElementById('t-stat3').textContent = t.stat3;
+    document.getElementById('t-info1').innerHTML = t.info1;
+    document.getElementById('t-info2').innerHTML = t.info2;
+    document.getElementById('t-footer').textContent = t.footer;
+    document.getElementById('cp').textContent = t.copy;
+    $('chosen').textContent = t.selected + selectedEmoji;
+    localStorage.setItem('emo_lang', lang);
+  }
+
+  /* ============ KEY EMOJIS ============ */
+  const DEFAULT_KEY_EMOJIS = [
+    "🎀","🦚","🥰","🤩","💕","💫","🥺","✨",
+    "😃","💋","♥️","🤎","🖤","🩶","🙉","👻",
+    "💌","💯","🩷","🤍","💜","💙","💖","💗"
+  ];
+
+  /* ============ SAFE CHARSET ============ */
+  const SAFE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const SAFE_MAP = {};
+  for(let i=0;i<SAFE_CHARS.length;i++) SAFE_MAP[SAFE_CHARS[i]] = i;
+  
+  const SEP = "~";
+  const END = "^";
+
+  let selectedEmoji = DEFAULT_KEY_EMOJIS[0];
+  let customEmojis = JSON.parse(localStorage.getItem('emo_custom') || '[]');
+  let allKeyEmojis = [...DEFAULT_KEY_EMOJIS, ...customEmojis];
+  const $ = id => document.getElementById(id);
+
+  /* ============ BUILD GRID ============ */
+  function buildGrid(){
+    $('grid').innerHTML = '';
+    allKeyEmojis.forEach((e)=>{
+      const b=document.createElement('button');
+      b.type='button';
+      b.className='emoji'+(e===selectedEmoji?' selected':'');
+      if(customEmojis.includes(e)) b.classList.add('custom');
+      b.textContent=e;
+      b.onclick=()=>{
+        document.querySelectorAll('.emoji').forEach(x=>x.classList.remove('selected'));
+        b.classList.add('selected');
+        selectedEmoji=e;
+        $('chosen').textContent=i18n[currentLang].selected + e;
+      };
+      $('grid').appendChild(b);
+    });
+  }
+
+  /* ============ LIVE COUNTER ============ */
+  $('msg').addEventListener('input',()=>{
+    const len = $('msg').value.length;
+    $('charCount').textContent = len;
+    const est = Math.ceil(len * 0.75) + 4;
+    $('emojiCount').textContent = est;
+    const ratio = len > 0 ? Math.round((est / len) * 100) : 0;
+    $('savePct').textContent = ratio + '%';
+  });
+
+  /* ============ SIMPLE SAFE HASH (no overflow) ============ */
+  function hashPwd(pwd){
+    let h1 = 0, h2 = 0;
+    for(let i=0;i<pwd.length;i++){
+      const c = pwd.charCodeAt(i);
+      h1 = (h1 * 31 + c) % 1000000007;
+      h2 = (h2 * 37 + c) % 1000000009;
+    }
+    return h1.toString(36) + h2.toString(36);
+  }
+
+  /* ============ ENCODE ============ */
+  function encodeMessage(text, password){
+    let payload;
+    if(password){
+      payload = 'B' + hashPwd(password) + ':' + text;
+    } else {
+      payload = 'A' + text;
+    }
+    
+    const compressed = LZString.compressToBase64(payload);
+    if(!compressed) throw new Error('Compression failed');
+    
+    const bytes = [];
+    let buffer = 0, bitsCount = 0;
+    for(let i=0;i<compressed.length;i++){
+      const c = compressed[i];
+      let val;
+      if(c >= 'A' && c <= 'Z') val = c.charCodeAt(0) - 65;
+      else if(c >= 'a' && c <= 'z') val = c.charCodeAt(0) - 97 + 26;
+      else if(c >= '0' && c <= '9') val = c.charCodeAt(0) - 48 + 52;
+      else if(c === '+') val = 62;
+      else if(c === '/') val = 63;
+      else if(c === '=') continue;
+      else continue;
+      
+      buffer = (buffer << 6) | val;
+      bitsCount += 6;
+      while(bitsCount >= 8){
+        bitsCount -= 8;
+        bytes.push((buffer >> bitsCount) & 0xFF);
+      }
+    }
+    
+    let bigInt = 0n;
+    for(const b of bytes){
+      bigInt = (bigInt << 8n) | BigInt(b);
+    }
+    
+    let base62 = '';
+    if(bigInt === 0n) base62 = '0';
+    while(bigInt > 0n){
+      const rem = Number(bigInt % 62n);
+      base62 = SAFE_CHARS[rem] + base62;
+      bigInt = bigInt / 62n;
+    }
+    
+    return selectedEmoji + SEP + base62 + END;
+  }
+
+  /* ============ DECODE ============ */
+  function decodeMessage(value, password){
+    const str = value.trim();
+    const sepIdx = str.indexOf(SEP);
+    if(sepIdx===-1) throw new Error('Invalid: ~ separator nahi mila.');
+    const endIdx = str.indexOf(END, sepIdx+1);
+    if(endIdx===-1) throw new Error('Invalid: ^ end marker nahi mila.');
+    
+    let base62 = str.slice(sepIdx+1, endIdx);
+    base62 = base62.replace(/[^A-Za-z0-9]/g, '');
+    
+    if(!base62) throw new Error('Data empty hai.');
+    
+    let bigInt = 0n;
+    for(let i=0;i<base62.length;i++){
+      const c = base62[i];
+      const val = SAFE_MAP[c];
+      if(val === undefined) throw new Error('Invalid char: ' + c);
+      bigInt = bigInt * 62n + BigInt(val);
+    }
+    
+    const bytes = [];
+    while(bigInt > 0n){
+      bytes.unshift(Number(bigInt & 0xFFn));
+      bigInt = bigInt >> 8n;
+    }
+    
+    let b64 = '';
+    for(let i=0;i<bytes.length;i+=3){
+      const b1 = bytes[i];
+      const b2 = i+1 < bytes.length ? bytes[i+1] : 0;
+      const b3 = i+2 < bytes.length ? bytes[i+2] : 0;
+      
+      b64 += SAFE_CHARS[(b1 >> 2) & 0x3F];
+      b64 += SAFE_CHARS[((b1 & 0x03) << 4) | ((b2 >> 4) & 0x0F)];
+      
+      if(i+1 < bytes.length) b64 += SAFE_CHARS[((b2 & 0x0F) << 2) | ((b3 >> 6) & 0x03)];
+      else b64 += '=';
+      
+      if(i+2 < bytes.length) b64 += SAFE_CHARS[b3 & 0x3F];
+      else b64 += '=';
+    }
+    
+    let result;
+    try{
+      result = LZString.decompressFromBase64(b64);
+      if(result === null || result === undefined){
+        throw new Error('Decompression returned null');
+      }
+    }catch(e){
+      throw new Error('Decode failed. String damaged ya galat hai.');
+    }
+    
+    if(result.length < 2) throw new Error('Payload too short.');
+    
+    const flag = result[0];
+    const rest = result.slice(1);
+    
+    if(flag === 'A'){
+      return rest;
+    } else if(flag === 'B'){
+      const colonIdx = rest.indexOf(':');
+      if(colonIdx === -1) throw new Error('Password format error.');
+      const storedHash = rest.slice(0, colonIdx);
+      const actualMsg = rest.slice(colonIdx + 1);
+      
+      if(!password) throw new Error(i18n[currentLang].pwdProtected);
+      const inputHash = hashPwd(password);
+      if(inputHash !== storedHash) throw new Error(i18n[currentLang].pwdWrong);
+      
+      return actualMsg;
+    } else {
+      throw new Error('Unknown format.');
+    }
+  }
+
+  /* ============ TABS ============ */
+  $('et').onclick=()=>{$('ep').classList.remove('hidden');$('dp').classList.add('hidden');
+    $('et').classList.add('active');$('dt').classList.remove('active')};
+  $('dt').onclick=()=>{$('dp').classList.remove('hidden');$('ep').classList.add('hidden');
+    $('dt').classList.add('active');$('et').classList.remove('active')};
+
+  /* ============ ENCODE ACTION ============ */
+  $('enc').onclick=()=>{
+    $('er').classList.add('show');
+    const msg=$('msg').value;
+    const pwd=$('password').value;
+    if(!msg.trim()){$('out').value='';$('es').textContent=i18n[currentLang].errEmpty;
+      $('es').className='status bad';return}
+    try{
+      const encoded = encodeMessage(msg, pwd);
+      $('out').value = encoded;
+      const pwdNote = pwd ? ' 🔐' : '';
+      $('es').textContent = i18n[currentLang].ready + ` — ${msg.length} chars → ${encoded.length} length.${pwdNote}`;
+      $('es').className='status good';
+    }catch(e){
+      $('out').value='';$('es').textContent='Error: '+e.message;
+      $('es').className='status bad';
+    }
+  };
+
+  $('cp').onclick=async()=>{
+    const out=$('out');
+    if(!out.value)return;
+    try{await navigator.clipboard.writeText(out.value)}
+    catch{out.focus();out.select();document.execCommand('copy')}
+    $('cp').textContent=i18n[currentLang].copied;
+    setTimeout(()=>$('cp').textContent=i18n[currentLang].copy,1300);
+  };
+
+  $('clr').onclick=()=>{$('msg').value='';$('out').value='';$('password').value='';
+    $('er').classList.remove('show');$('es').textContent='';
+    $('charCount').textContent='0';$('emojiCount').textContent='0';$('savePct').textContent='0%'};
+
+  /* ============ DECODE ACTION ============ */
+  $('dec').onclick=()=>{
+    $('dr').classList.add('show');
+    try{
+      const pwd = $('passwordDecode').value;
+      $('decoded').value = decodeMessage($('input').value, pwd);
+      $('ds').textContent=i18n[currentLang].okDecode;
+      $('ds').className='status good';
+    }catch(e){
+      $('decoded').value='';$('ds').textContent=e.message;
+      $('ds').className='status bad';
+    }
+  };
+
+  $('dclr').onclick=()=>{$('input').value='';$('decoded').value='';$('passwordDecode').value='';
+    $('dr').classList.remove('show');$('ds').textContent=''};
+
+  /* ============ CUSTOM EMOJI ============ */
+  $('addCustom').onclick=()=>{
+    const val = $('customEmoji').value.trim();
+    if(!val){
+      alert(i18n[currentLang].customInvalid);
+      return;
+    }
+    if(allKeyEmojis.includes(val)){
+      alert(i18n[currentLang].customExists);
+      return;
+    }
+    customEmojis.push(val);
+    localStorage.setItem('emo_custom', JSON.stringify(customEmojis));
+    allKeyEmojis.push(val);
+    buildGrid();
+    $('customEmoji').value = '';
+    alert(i18n[currentLang].customAdded);
+  };
+
+  /* ============ PASSWORD TOGGLE ============ */
+  $('togglePwd').onclick=()=>{
+    const p = $('password');
+    p.type = p.type === 'password' ? 'text' : 'password';
+  };
+  $('togglePwdDecode').onclick=()=>{
+    const p = $('passwordDecode');
+    p.type = p.type === 'password' ? 'text' : 'password';
+  };
+
+  /* ============ LANGUAGE SELECT ============ */
+  $('langSelect').addEventListener('change',(e)=>{
+    applyLang(e.target.value);
+  });
+
+  /* ============ INIT ============ */
+  const savedLang = localStorage.getItem('emo_lang') || 'en';
+  $('langSelect').value = savedLang;
+  buildGrid();
+  applyLang(savedLang);
+  $('chosen').textContent = i18n[savedLang].selected + selectedEmoji;
+})();
+</script>
+</body>
+</html>
